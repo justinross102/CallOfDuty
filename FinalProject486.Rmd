@@ -105,12 +105,29 @@ Briefly touch upon why certain models didn't make the cut. This doesn't have to 
 - Computationally too intensive for the marginal gain in accuracy.
 - Difficulty in hyperparameter tuning.
 
+To our surprise, tree based models did not consistently outperform linear models. We used a random forest to predict wins, but the best test RMSE that we obtained was higher than the RMSE that we obtained with a linear model.
+	
+Ensemble methods also did not show significant promise over single models. The test RMSE from the random forests and gradient boosting models performed about the same as single models like k-nearest neighbors and performed worse than linear regression.
+	
+The biggest challenge that we all faced with more complex models like random forests and gradient boosting was overfitting. We consistently obtained significantly higher training RMSE’s than testing RMSE’s which was a surprise. Even with extensive hyperparameter tuning on the number of trees, depth of trees, and number of features considered at each split, the testing RMSE never got super close to being less than or equal to the training RMSE. Hyperparameter tuning on the learning rate and number of estimators in the gradient boosting model yielded similar results to the random forest.
+	
+Gradient boosting and random forests are both robust machine learning methods and we are sure that with an even more thorough hyper parameter tuning process, we could have found a model that we were satisfied with that doesn’t overfit the data. However, we determined that the computation would be too intensive for the marginal gain in accuracy. Even though linear regression is a simple method, we are satisfied with the RMSE that it yielded and the short amount of time it took to run.
+
 #### Detailed Discussion on Best Model:
 - Go in-depth into the model that performed the best
 - Hyperparameter tuning
 - Performance metrics
 - SHAP and/or feature importance results including a few individual false positives/false negatives and true positives/true negatives (adapted to regression if applicable)
 - Insights from cluster analysis or anomaly detection
+
+CLUSTERING	
+A K-means clustering analysis offered interesting insights into player performance differences. It split players into three groups based off their stats: casual, elite, and regular.
+	
+The casual players have low average wins and kills. They also had lower prestige levels and play time, indicating that they are inexperienced and only play Call of Duty casually. 
+	 
+The elite players average high numbers of wins, kills, time played, and prestige. They invest a lot of time and effort into Call of Duty and reap the reward of wins because of it.
+	
+The regular players find themselves square in the middle of the casual and elite players. Their average wins, kills, time played, and prestige show that they are regularly engaged in Call of Duty and have strong skills and abilities, but they do not log enough play time to reach the elite status of the tier above them.
 
 #### Conclusion and Next Steps:
 - Conclude by reinforcing the choice of the best model and its implications.
