@@ -82,10 +82,18 @@ In our EDA we found that almost every explanatory variable had a positive and li
 #### Methods (depending on the structure of your project, only some of the following are applicable): 
 - Overview of feature engineering and how it improved your model (including any features from dimension reduction)
 - Present a list or table of all models used. For each model, provide a very brief description (slightly longer if the model is not commonly known)
+
+|Model       | Description | Hyperparameters|
+|:-----------|:---------|:------------|
+|Linear Regression | This does Linear Regression This does Linear Regression This does Linear Regression This does Linear Regression This does Linear Regression| hyperparameters |
+|SVM   | This does SVM stuff| hyperparameters |
+
+
 - Key hyperparameters explored
 - High-level model results 
 
 #### Discussion on Model Selection:
+
 Without going into deep details, mention any patterns observed across models, such as:  
 
 - Were tree-based models consistently outperforming linear models?
