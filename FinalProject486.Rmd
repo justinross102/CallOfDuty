@@ -2,7 +2,9 @@
 title: "STAT 486 Report"
 author: "Justin Ross"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -12,7 +14,7 @@ library(reticulate)
 #reticulate::py_install("matplotlib")
 ```
 
-```{python}
+```{python include = F}
 import pandas as pd
 import numpy as np
 from sklearn.neighbors import KNeighborsRegressor
@@ -38,7 +40,7 @@ print(cod)
 
 One of life's most desperately desired achievements is a win in Call of Duty. As such, our goal in this analysis is to determine the factors that contribute to success in online multiplayer matches. The data for our analysis was collected from [Kaggle](https://www.kaggle.com/datasets/aishahakami/call-of-duty-players), and contains a number of variables relating to player performance. 
 
-```{python}
+```{python include = F}
 # feature engineering
 
 # Calculate Accuracy by dividing hits by shots, handling division by zero
@@ -55,29 +57,70 @@ cod.loc[~mask, 'Headshot Ratio'] = pd.NA  # Set Accuracy to pd.NA for zero shots
 mask = cod['gamesPlayed'] != 0  # Create a mask for non-zero gamesPlayed
 cod.loc[mask, 'Average Deaths per Game'] = cod['deaths'] / cod['gamesPlayed']
 cod.loc[~mask, 'Average Deaths per Game'] = pd.NA  # Set to pd.NA for zero gamesPlayed
+
+# Calculate the first quartile (Q1) and third quartile (Q3)
+Q1 = cod['gamesPlayed'].quantile(0.25)
+Q3 = cod['gamesPlayed'].quantile(0.75)
+
+# Calculate the IQR (Interquartile Range)
+IQR = Q3 - Q1
+
+# Define the upper and lower bounds to identify outliers
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+# Filter out rows where data points are outside the bounds
+cod = cod[(cod['gamesPlayed'] >= lower_bound) & (cod['gamesPlayed'] <= upper_bound)]
+cod = cod[cod['gamesPlayed'] != 0]
+# Now 'filtered_df' contains the DataFrame with outliers removed
+print(len(cod))
+
 ```
 
 
-#### Exploratory Data Analysis (EDA)
-- Present summary statistics / plots to give an overview of the data
-- Present any key findings from EDA
-```{python, fig.align = 'center'}
-sns.scatterplot(x = "kills", y = "wins", data = cod)
+#### Exploratory Data Analysis
+Our dataset originally included data on 1558 unique Call of Duty players. However, many of these players had not played any games and as such they were removed. We also removed significantly large outliers. As a result, our dataset now consists of 694 unique players.
+
+For the players in our analysis, the average number of online matches is 68, and the average number of total online wins is 116. The mean kill-death ratio is 0.838, suggesting that on average, players are killed more often than they kill their opponents. As the plot below demonstrates, most players have relatively young accounts with levels less than 50.
+
+```{python echo = F, fig.align='center'}
+plt.figure(figsize=(14, 6))
+sns.histplot(x = 'level', data=cod)
+plt.title('Distribution of Account Levels')
+plt.xlabel('Level')
 plt.show()
-
-sns.scatterplot(x = "timePlayed", y = "wins", data = cod)
-plt.show()
-
-
-sns.histplot(x = "timePlayed", data=cod)
-
-cod.loc[cod['wins'] != 0, 'wins'].mean()
-cod.loc[cod['wins'] != 0, 'wins'].median()
-cod.loc[cod['gamesPlayed'] != 0, 'gamesPlayed'].mean()
-cod.loc[cod['gamesPlayed'] != 0, 'gamesPlayed'].median()
 ```
 
-In our EDA we found that almost every explanatory variable had a positive and linear relationship with the number of wins. We also found several outliers caused by players with an excessive amount of playing time as well as players with limited playing time.
+To better understand the relationships between the explanatory variables and the number of wins, we plotted some of the variables we thought would be most related to wins.
+
+```{python echo = F, fig.align='center'}
+fig, axes = plt.subplots(1, 2, figsize=(14, 6))  # 1 row, 2 columns
+sns.scatterplot(x="kills", y="wins", data=cod, ax=axes[0])
+axes[0].set_title('Kills vs Wins')
+
+sns.scatterplot(x="gamesPlayed", y="wins", data=cod, ax=axes[1])
+axes[1].set_title('Games Played vs Wins')
+
+plt.tight_layout()
+plt.show()
+```
+
+These plots demonstrate the high correlations between these variables and a player's number of wins. Kills has a correlation of 0.833 and games played has a correlation of 0.742. However, an issue we face is that there is correlation between some of our explanatory variables. 
+
+```{python fig.align='center', echo=F}
+correlation_matrix = cod.corr()
+plt.figure(figsize=(11, 7))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt='.2f', linewidths=0.25)
+
+# Add plot title and display the plot
+plt.title('Correlation Matrix')
+plt.show()
+```
+
+Due to the multicollinearity in the data, we have to be decisive in the model fitting process. We will have to be careful with linear models, as multicollinearity can cause a model to produce inaccurate model coefficients. To combat this, we will try a number of linear and non-linear models, as well as regularization and feature selection to create our best possible model. 
+
+
+\newpage
 
 #### Methods (depending on the structure of your project, only some of the following are applicable): 
 - Overview of feature engineering and how it improved your model (including any features from dimension reduction)
@@ -85,12 +128,10 @@ In our EDA we found that almost every explanatory variable had a positive and li
 
 |Model       | Description | Hyperparameters|
 |:-----------|:---------|:------------|
-|Linear Regression | This does Linear Regression This does Linear Regression This does Linear Regression This does Linear Regression This does Linear Regression| hyperparameters |
-|SVM   | This does SVM stuff| hyperparameters |
-
-
-- Key hyperparameters explored
-- High-level model results 
+|Linear Regression | This does Linear Regression and some cool other info goes here| hyperparameters |
+|K-Nearest Neighbors | New predictions are the averaged target values of the k nearest neighbors in the training data | Number of neighbors, Weights|
+|Lasso/Ridge | Linear models that penalize the size of the model coefficients (this helps combat multicollinearity) | $\alpha$|
+|SVM   | Creates a margin around predicted values, trying to find an optimal balance between fitting the data and avoiding overfitting| C, Kernel, Gamma |
 
 #### Discussion on Model Selection:
 
