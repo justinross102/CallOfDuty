@@ -154,12 +154,24 @@ The biggest challenge that we all faced with more complex models like random for
 	
 Gradient boosting and random forests are both robust machine learning methods and we are sure that with an even more thorough hyper parameter tuning process, we could have found a model that we were satisfied with that doesn’t overfit the data. However, we determined that the computation would be too intensive for the marginal gain in accuracy. Even though k-nearest neighbors and penalized linear regression are simple methods, we are satisfied with the RMSE that it yielded and the short amount of time it took to run.
 
+
+
+A Multiple Linear Regression had our second best test RMSE underfit some degree. Using a standard Linear model, we feature engineered our variables and standardized the data to receive our results which is only slightly worse than our Neural Network.
+
 #### Detailed Discussion on Best Model:
 - Go in-depth into the model that performed the best
 - Hyperparameter tuning
 - Performance metrics
 - SHAP and/or feature importance results including a few individual false positives/false negatives and true positives/true negatives (adapted to regression if applicable)
 - Insights from cluster analysis or anomaly detection
+
+A Neural Network which had our best test RMSE still overfit by a some degree. Using a MLP network we tuned the hyper parameters by using a grid search for hidden layers, activation, solver, alpha, and learning rate. The final hyper parameters used were
+activation: tanh
+alpha: 0.01
+hidden_layer_sizes: (100,)
+learning_rate: adaptive
+solver: sgd
+Overall the model took longer to run than some of the others but it was our best model with a test RMSE of 49.91
 
 CLUSTERING	
 A K-means clustering analysis offered interesting insights into player performance differences. It split players into four groups based off their stats: new players, elite players, experienced and competent players, and intermediate active players. 
