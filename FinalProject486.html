@@ -9,9 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Justin Ross" />
+<meta name="author" content="Bryce Marshall, Justin Ross, Tyler Smith, Cameron Slaugh" />
 
-<meta name="date" content="2024-04-15" />
+<meta name="date" content="2024-04-16" />
 
 <title>STAT 486 Report</title>
 
@@ -351,8 +351,9 @@ display: none;
 
 
 <h1 class="title toc-ignore">STAT 486 Report</h1>
-<h4 class="author">Justin Ross</h4>
-<h4 class="date">2024-04-15</h4>
+<h4 class="author">Bryce Marshall, Justin Ross, Tyler Smith, Cameron
+Slaugh</h4>
+<h4 class="date">2024-04-16</h4>
 
 </div>
 
@@ -395,16 +396,22 @@ non-linear models, as well as regularization and feature selection to
 create our best possible model.</p>
 <div style="page-break-after: always;"></div>
 </div>
-<div id="methods-depending-on-the-structure-of-your-project-only-some-of-the-following-are-applicable" class="section level4">
-<h4>Methods (depending on the structure of your project, only some of
-the following are applicable):</h4>
-<ul>
-<li>Overview of feature engineering and how it improved your model
-(including any features from dimension reduction)</li>
-<li>Present a list or table of all models used. For each model, provide
-a very brief description (slightly longer if the model is not commonly
-known)</li>
-</ul>
+<div id="methods" class="section level4">
+<h4>Methods</h4>
+<p>Feature engineering was key in making our model better at predicting
+game outcomes. First, we cleaned the data by removing any unusual values
+in the ‘gamesPlayed’ column using a method called Interquartile Range.
+This helped get rid of any misleading data.</p>
+<p>Next, we created two new features to give our model more information
+to work with. The ‘Accuracy’ feature shows the ratio of hits to shots,
+and we made sure to handle cases where there were no shots to avoid
+errors. The ‘Headshot Ratio’ shows the ratio of headshots to kills,
+giving us more insight into players’ aiming skills.</p>
+<p>Before feeding the data into the model, we filled in any missing
+values using the median value of each feature. We also added some
+polynomial features to capture any non-linear relationships in the data.
+Finally, we standardized all the features to put them on the same scale,
+making it easier for the model to understand and learn from them.</p>
 <table>
 <colgroup>
 <col width="34%" />
@@ -420,10 +427,11 @@ known)</li>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">Linear Regression</td>
-<td align="left">This does Linear Regression and some cool other info
-goes here</td>
-<td align="left">hyperparameters</td>
+<td align="left">Gradient Boosting</td>
+<td align="left">Builds a strong predictive model by combining multiple
+weak predictive models, typically decision trees</td>
+<td align="left">Number of estimators, Learning Rate, Max Depth,
+Subsample</td>
 </tr>
 <tr class="even">
 <td align="left">K-Nearest Neighbors</td>
@@ -438,6 +446,25 @@ coefficients (this helps combat multicollinearity)</td>
 <td align="left"><span class="math inline">\(\alpha\)</span></td>
 </tr>
 <tr class="even">
+<td align="left">Linear Regression</td>
+<td align="left">Fits a linear equation to observed data</td>
+<td align="left">None</td>
+</tr>
+<tr class="odd">
+<td align="left">Neural Network</td>
+<td align="left">Maps input data to output values by passing data
+through multiple layers of interconnected nodes</td>
+<td align="left">Hidden Layers, Activation, Solver, Alpha, Learning
+Rate</td>
+</tr>
+<tr class="even">
+<td align="left">Random Forest</td>
+<td align="left">Builds multiple decision trees and averages the
+predictions to get a more accurate and stable prediction</td>
+<td align="left">Number of Estimators, Max Depth, Minimum Samples
+Leaf</td>
+</tr>
+<tr class="odd">
 <td align="left">SVM</td>
 <td align="left">Creates a margin around predicted values, trying to
 find an optimal balance between fitting the data and avoiding
@@ -447,49 +474,134 @@ overfitting</td>
 </tbody>
 </table>
 </div>
-<div id="discussion-on-model-selection" class="section level4">
-<h4>Discussion on Model Selection:</h4>
-<p>Without going into deep details, mention any patterns observed across
-models, such as:</p>
-<ul>
-<li>Were tree-based models consistently outperforming linear
-models?</li>
-<li>Did ensemble models show significant promise over single
-models?</li>
-<li>Talk about major pitfalls or challenges faced with certain models,
-e.g., overfitting with a deep neural network, or convergence issues with
-a certain algorithm. Briefly touch upon why certain models didn’t make
-the cut. This doesn’t have to be detailed but can include reasons
-like:</li>
-<li>Poor performance on validation data.</li>
-<li>Overfitting issues.</li>
-<li>Computationally too intensive for the marginal gain in
-accuracy.</li>
-<li>Difficulty in hyperparameter tuning.</li>
-</ul>
+<div id="model-selection" class="section level4">
+<h4>Model Selection</h4>
+<p>To our surprise, tree based models did not consistently outperform
+linear models. We used a random forest to predict wins, but the best
+test RMSE that we obtained was higher than the RMSE that we obtained
+with linear models like linear regression and penalized linear
+regression.</p>
+<p>Ensemble methods also did not show significant promise over single
+models. The test RMSE from the random forests and gradient boosting
+models performed about the same as single models like k-nearest
+neighbors and performed worse than linear regression and penalized
+linear regression.</p>
+<p>The biggest challenge that we all faced with more complex models like
+random forests and gradient boosting was overfitting. We consistently
+obtained significantly lower training RMSE’s than testing RMSE’s which
+was a surprise. Even with extensive hyperparameter tuning on the number
+of trees, depth of trees, and number of features considered at each
+split, the testing RMSE never got super close to being less than or
+equal to the training RMSE. Hyperparameter tuning on the learning rate
+and number of estimators in the gradient boosting model yielded similar
+results to the random forest.</p>
+<p>Gradient boosting and random forests are both robust machine learning
+methods and we are sure that with an even more thorough hyper parameter
+tuning process, we could have found a model that we were satisfied with
+that doesn’t overfit the data. However, we determined that the
+computation would be too intensive for the marginal gain in accuracy.
+Even though k-nearest neighbors and penalized linear regression are
+simple methods, we are satisfied with the RMSE that it yielded and the
+short amount of time it took to run.</p>
+<p>A Multiple Linear Regression had our second best test RMSE underfit
+some degree. Using a standard Linear model, we feature engineered our
+variables and standardized the data to receive our results which is only
+slightly worse than our Neural Network.</p>
 </div>
-<div id="detailed-discussion-on-best-model" class="section level4">
-<h4>Detailed Discussion on Best Model:</h4>
+<div id="best-model" class="section level4">
+<h4>Best Model</h4>
+<p>A Neural Network, which had our best test RMSE, still overfit by some
+degree. Using a MLP network we tuned the hyperparameters by using a grid
+search for hidden layers, activation, solver, alpha, and learning rate.
+Overall the model took longer to run than some of the others but it was
+our best model with a test RMSE of 49.91. The final hyperparameters used
+were:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Hyperparameter</th>
+<th align="left">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Activation</td>
+<td align="left">tanh</td>
+</tr>
+<tr class="even">
+<td align="left">Alpha</td>
+<td align="left">0.01</td>
+</tr>
+<tr class="odd">
+<td align="left">Hidden Layer Sizes</td>
+<td align="left">100</td>
+</tr>
+<tr class="even">
+<td align="left">Learning Rate</td>
+<td align="left">adaptive</td>
+</tr>
+<tr class="odd">
+<td align="left">Solver</td>
+<td align="left">sgd</td>
+</tr>
+</tbody>
+</table>
+<p>Our model’s most important features were Time Played, Level, Score
+per Minute, and Accuracy.</p>
+<p>A K-means clustering analysis offered interesting insights into
+player performance differences. It split players into four groups based
+off their stats: new players, elite players, experienced and competent
+players, and intermediate active players.</p>
 <ul>
-<li>Go in-depth into the model that performed the best</li>
-<li>Hyperparameter tuning</li>
-<li>Performance metrics</li>
-<li>SHAP and/or feature importance results including a few individual
-false positives/false negatives and true positives/true negatives
-(adapted to regression if applicable)</li>
-<li>Insights from cluster analysis or anomaly detection</li>
+<li>New Players (Cluster 0)
+<ul>
+<li>These players that have low wins (30.25) and kills (478.57). These
+players also have a low kill-death ratio (0.71) and engage minimally
+with the game, as indicated by lower levels (11.73) and moderate
+prestige (14.5).</li>
+</ul></li>
+<li>Elite Players (Cluster 1)
+<ul>
+<li>Players who are highly skilled veterans with high wins (395.79) and
+an extensive number of kills (9112.71). High levels (173.21) and maximum
+prestige (100.24) indicate significant time investment and
+expertise.</li>
+</ul></li>
+<li>Experienced and Competent Players (Cluster 2)
+<ul>
+<li>Players with moderate-to-high wins (211.98) and kills (4828.83),
+displaying a good kill-death ratio (0.96). With substantial prestige
+(62.08), these players are very good but might not play as intensively
+as the elite players.</li>
+</ul></li>
+<li>Intermediate Active Players (Cluster 3)
+<ul>
+<li>Characteristics: Players who engage deeply during play sessions with
+moderate wins (103.96) and kills (1654.91), high prestige (99.40), and
+significant game time per session (47.34 minutes).</li>
+</ul></li>
 </ul>
 </div>
 <div id="conclusion-and-next-steps" class="section level4">
 <h4>Conclusion and Next Steps:</h4>
-<ul>
-<li>Conclude by reinforcing the choice of the best model and its
-implications.</li>
-<li>Report or reinforce the answer/conclusion about your original
-problem statement</li>
-<li>Discuss any potential future steps or improvements that could be
-made, perhaps leveraging models or techniques not yet explored.</li>
-</ul>
+<p>The neural network stood out as the best model with a test RMSE of
+49.91, highlighting its strong performance in predicting game outcomes.
+This means it’s reliable for our goal of using player stats to forecast
+wins. The most important features were Time Played, Level, Score per
+Minute, and Accuracy. This suggests that the best way to contribute to a
+win is to play more games, be accurate in your shots, and aggressive in
+your gameplay. These attributes will most heavily influence your success
+in online matches.</p>
+<p>Looking forward, there’s room for improvement. We can fine-tune the
+neural network’s settings to potentially boost its accuracy further.
+Exploring other techniques like ensemble methods or hybrid models could
+also help enhance our predictions. It might be beneficial to refine our
+feature engineering to better capture the unique aspects of the game.
+Additionally, integrating real-time data and applying methods like
+reinforcement learning could make our model more adaptable to changing
+gameplay dynamics. To keep our model effective, regular updates with new
+data will be essential to ensure its predictions remain accurate and
+relevant over time.</p>
 </div>
 
 
