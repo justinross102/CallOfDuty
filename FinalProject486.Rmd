@@ -1,6 +1,6 @@
 ---
 title: "STAT 486 Report"
-author: "Justin Ross"
+author: "Bryce Marshall, Justin Ross, Tyler Smith, Cameron Slaugh"
 date: "`r Sys.Date()`"
 output:
   pdf_document: default
@@ -122,58 +122,56 @@ Due to the multicollinearity in the data, we have to be decisive in the model fi
 
 \newpage
 
-#### Methods (depending on the structure of your project, only some of the following are applicable): 
-- Overview of feature engineering and how it improved your model (including any features from dimension reduction)
-- Present a list or table of all models used. For each model, provide a very brief description (slightly longer if the model is not commonly known)
+#### Methods 
+
+Feature engineering was key in making our model better at predicting game outcomes. First, we cleaned the data by removing any unusual values in the 'gamesPlayed' column using a method called Interquartile Range. This helped get rid of any misleading data.
+
+Next, we created two new features to give our model more information to work with. The 'Accuracy' feature shows the ratio of hits to shots, and we made sure to handle cases where there were no shots to avoid errors. The 'Headshot Ratio' shows the ratio of headshots to kills, giving us more insight into players' aiming skills.
+
+Before feeding the data into the model, we filled in any missing values using the median value of each feature. We also added some polynomial features to capture any non-linear relationships in the data. Finally, we standardized all the features to put them on the same scale, making it easier for the model to understand and learn from them.
 
 |Model       | Description | Hyperparameters|
 |:-----------|:---------|:------------|
-|Linear Regression | This does Linear Regression and some cool other info goes here| hyperparameters |
+|Gradient Boosting | Builds a strong predictive model by combining multiple weak predictive models, typically decision trees | Number of estimators, Learning Rate, Max Depth, Subsample|
+||||
 |K-Nearest Neighbors | New predictions are the averaged target values of the k nearest neighbors in the training data | Number of neighbors, Weights|
+||||
 |Lasso/Ridge | Linear models that penalize the size of the model coefficients (this helps combat multicollinearity) | $\alpha$|
+||||
+|Linear Regression | Fits a linear equation to observed data | None |
+||||
+|Neural Network | Maps input data to output values by passing data through multiple layers of interconnected nodes| Hidden Layers, Activation, Solver, Alpha, Learning Rate|
+||||
+|Random Forest | Builds multiple decision trees and averages the predictions to get a more accurate and stable prediction | Number of Estimators, Max Depth, Minimum Samples Leaf|
+||||
 |SVM   | Creates a margin around predicted values, trying to find an optimal balance between fitting the data and avoiding overfitting| C, Kernel, Gamma |
 
-#### Discussion on Model Selection:
-
-Without going into deep details, mention any patterns observed across models, such as:  
-
-- Were tree-based models consistently outperforming linear models?
-- Did ensemble models show significant promise over single models?
-- Talk about major pitfalls or challenges faced with certain models, e.g., overfitting with a deep neural network, or convergence issues with a certain algorithm.
-Briefly touch upon why certain models didn't make the cut. This doesn't have to be detailed but can include reasons like:
-- Poor performance on validation data.
-- Overfitting issues.
-- Computationally too intensive for the marginal gain in accuracy.
-- Difficulty in hyperparameter tuning.
+#### Model Selection
 
 To our surprise, tree based models did not consistently outperform linear models. We used a random forest to predict wins, but the best test RMSE that we obtained was higher than the RMSE that we obtained with linear models like linear regression and penalized linear regression.
 	
 Ensemble methods also did not show significant promise over single models. The test RMSE from the random forests and gradient boosting models performed about the same as single models like k-nearest neighbors and performed worse than linear regression and penalized linear regression.
 	
-The biggest challenge that we all faced with more complex models like random forests and gradient boosting was overfitting. We consistently obtained significantly higher training RMSE’s than testing RMSE’s which was a surprise. Even with extensive hyperparameter tuning on the number of trees, depth of trees, and number of features considered at each split, the testing RMSE never got super close to being less than or equal to the training RMSE. Hyperparameter tuning on the learning rate and number of estimators in the gradient boosting model yielded similar results to the random forest.
+The biggest challenge that we all faced with more complex models like random forests and gradient boosting was overfitting. We consistently obtained significantly lower training RMSE’s than testing RMSE’s which was a surprise. Even with extensive hyperparameter tuning on the number of trees, depth of trees, and number of features considered at each split, the testing RMSE never got super close to being less than or equal to the training RMSE. Hyperparameter tuning on the learning rate and number of estimators in the gradient boosting model yielded similar results to the random forest.
 	
 Gradient boosting and random forests are both robust machine learning methods and we are sure that with an even more thorough hyper parameter tuning process, we could have found a model that we were satisfied with that doesn’t overfit the data. However, we determined that the computation would be too intensive for the marginal gain in accuracy. Even though k-nearest neighbors and penalized linear regression are simple methods, we are satisfied with the RMSE that it yielded and the short amount of time it took to run.
 
-
-
 A Multiple Linear Regression had our second best test RMSE underfit some degree. Using a standard Linear model, we feature engineered our variables and standardized the data to receive our results which is only slightly worse than our Neural Network.
 
-#### Detailed Discussion on Best Model:
-- Go in-depth into the model that performed the best
-- Hyperparameter tuning
-- Performance metrics
-- SHAP and/or feature importance results including a few individual false positives/false negatives and true positives/true negatives (adapted to regression if applicable)
-- Insights from cluster analysis or anomaly detection
+#### Best Model
 
-A Neural Network which had our best test RMSE still overfit by a some degree. Using a MLP network we tuned the hyper parameters by using a grid search for hidden layers, activation, solver, alpha, and learning rate. The final hyper parameters used were
-activation: tanh
-alpha: 0.01
-hidden_layer_sizes: (100,)
-learning_rate: adaptive
-solver: sgd
-Overall the model took longer to run than some of the others but it was our best model with a test RMSE of 49.91
+A Neural Network, which had our best test RMSE, still overfit by some degree. Using a MLP network we tuned the hyperparameters by using a grid search for hidden layers, activation, solver, alpha, and learning rate. Overall the model took longer to run than some of the others but it was our best model with a test RMSE of 49.91. The final hyperparameters used were:
 
-CLUSTERING	
+|Hyperparameter | Value |
+|:-----------|:---------|
+|Activation| tanh|
+|Alpha| 0.01|
+|Hidden Layer Sizes| 100|
+|Learning Rate| adaptive|
+|Solver| sgd|
+
+Our model's most important features were Time Played, Level, Score per Minute, and Accuracy.
+
 A K-means clustering analysis offered interesting insights into player performance differences. It split players into four groups based off their stats: new players, elite players, experienced and competent players, and intermediate active players. 
 	
 * New Players (Cluster 0)
@@ -189,9 +187,10 @@ A K-means clustering analysis offered interesting insights into player performan
   * Characteristics: Players who engage deeply during play sessions with moderate wins (103.96) and kills (1654.91), high prestige (99.40), and significant game time per session (47.34 minutes).
 
 #### Conclusion and Next Steps:
-- Conclude by reinforcing the choice of the best model and its implications.
-- Report or reinforce the answer/conclusion about your original problem statement
-- Discuss any potential future steps or improvements that could be made, perhaps leveraging models or techniques not yet explored.
+
+The neural network stood out as the best model with a test RMSE of 49.91, highlighting its strong performance in predicting game outcomes. This means it's reliable for our goal of using player stats to forecast wins. The most important features were Time Played, Level, Score per Minute, and Accuracy. This suggests that the best way to contribute to a win is to play more games, be accurate in your shots, and aggressive in your gameplay. These attributes will most heavily influence your success in online matches.
+
+Looking forward, there's room for improvement. We can fine-tune the neural network's settings to potentially boost its accuracy further. Exploring other techniques like ensemble methods or hybrid models could also help enhance our predictions. It might be beneficial to refine our feature engineering to better capture the unique aspects of the game. Additionally, integrating real-time data and applying methods like reinforcement learning could make our model more adaptable to changing gameplay dynamics. To keep our model effective, regular updates with new data will be essential to ensure its predictions remain accurate and relevant over time.
 
 
 
